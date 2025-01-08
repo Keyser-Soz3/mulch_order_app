@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, redirect, session, Response
 import sqlite3
+# uncomment this import for local testing
+# import config
+import os
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_APP_SECRET")  # Replace with a secure secret key
