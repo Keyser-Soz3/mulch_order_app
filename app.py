@@ -39,7 +39,7 @@ def init_db():
                 scout TEXT,
                 troop TEXT,
                 village TEXT
-            )
+            );
         """)
     
     # with sqlite3.connect("orders.db") as conn:
@@ -70,7 +70,7 @@ def save_order(data):
     with pool.connect() as conn:
         conn.execute("""
             INSERT INTO orders (first_name, last_name, address, phone, email, quantity, donation, total_price, payment_method, delivery_location, other_instructions, scout, troop, village)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """, data)
 
 
