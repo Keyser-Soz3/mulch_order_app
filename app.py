@@ -39,7 +39,7 @@ def save_order(data):
 
 def check_auth(username, password):
     """Validate username and password."""
-    return username == config.USERNAME and password == config.PASSWORD
+    return username == ENV['USERNAME'] and password == ENV['PASSWORD']
 
 def authenticate():
     """Sends a 401 response with a Basic Auth prompt."""
@@ -96,7 +96,7 @@ def form():
         troop=session.get("troop", ""),
         village=session.get("village", ""),
         form = form,
-        API_KEY = config.api_key
+        API_KEY = ENV['GCLOUD_PLACES_API_KEY']
     )
 
 if __name__ == "__main__":
