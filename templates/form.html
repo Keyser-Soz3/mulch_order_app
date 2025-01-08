@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mulch Order Form</title>
+    <link rel="stylesheet" href="/static/styles.css">
+
+    <script src="/static/script.js" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ API_KEY }}&libraries=places" async defer></script>  
+    <!-- &callback=initAutocomplete -->
+    
+</head>
+<body>
+    
+    <div class="container">
+        <h1>Mulch Order Form</h1>
+        <form method="POST" action="/">
+           
+            <fieldset>
+                <legend>Customer Information</legend>
+                <!-- First Name and Last Name -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" id="last_name" name="last_name" required>
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="form-group">
+                    <label for="address">Street Address</label>
+                    <input type="text" id="address" name="address" required>
+                </div>
+
+                <!-- Village -->
+                <div class="form-group">
+                    <label for="village">Village</label>
+                    <select id="village" name="village" required>
+                        <option value="barrington">Barrington</option>
+                        <option value="bear_branch">Bear Branch</option>
+                        <option value="elm_grove">Elm Grove</option>
+                        <option value="forest_cove">Forest Cove</option>
+                        <option value="fosters_mill">Fosters Mill</option>
+                        <option value="greentree">Greentree</option>
+                        <option value="hunters_ridge">Hunters Ridge</option>
+                        <option value="kings_crossing">Kings Crossing</option>
+                        <option value="kings_forest">Kings Forest</option>
+                        <option value="kings_manor">Kings Manor</option>
+                        <option value="kings_point">Kings Point</option>
+                        <option value="kings_river">Kings River</option>
+                        <option value="kingwood_glen">Kingwood Glen</option>
+                        <option value="kingwood_lakes">GreeKingwood Lakesntree</option>
+                        <option value="kingwood_place_village">Kingwood Place Village</option>
+                        <option value="mills_branch">Mills Branch</option>
+                        <option value="north_kingwood_forest">North Kingwood Forest</option>
+                        <option value="oakhurst">Oakhurst</option>
+                        <option value="riverchase">Riverchase</option>
+                        <option value="rivergrove">Rivergrove</option>
+                        <option value="royal_shores">Royal Shores</option>
+                        <option value="sand_creek">Sand Creek</option>
+                        <option value="sherwood_trails">Sherwood Trails</option>
+                        <option value="the_oaks">The Oaks</option>
+                        <option value="trailwood">Trailwood</option>
+                        <option value="woodland_hills">Woodland Hills (North & South)</option>
+                        <option value="woodridge_forest">Woodridge Forest</option>
+                        <option value="woodspring">Woodspring</option>
+                        <option value="woodstream">Woodstream</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Email and Phone Number -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" oninput="validateEmail(this)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone_number">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" oninput="formatPhoneNumber(this)" required>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Scout Information</legend>
+                <!-- Scout and Troop -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="scout">Sold By Scout</label>
+                        <input type="text" id="scout" name="scout" value="{{ scout }}">
+                    </div>
+                    <div class="form-group small">
+                        <label for="troop">Troop</label>
+                        <input type="text" id="troop" name="troop" value="{{ troop }}">
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Order Information</legend>
+                <!-- Quantity and Donation -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="quantity">Quantity (Bags)</label>
+                        <input type="number" id="quantity" name="quantity" value="0" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="donation">Donation ($)</label>
+                        <input type="number" id="donation" name="donation" value="0" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        Total Price: $<span id="total_price">0.00</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment_method">Payment Method:</label>
+                        <select id="payment_method" name="payment_method" required>
+                            <option value="cash">Cash</option>
+                            <option value="check">Check</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label for="delivery_location">Delivery Location:</label>
+                <select id="delivery_location" name="delivery_location" required>
+                    <option value="left">Left side of driveway/garage</option>
+                    <option value="right">Right side of driveway/garage</option>
+                    <option value="back_patio">Back patio</option>
+                    <option value="front_beds">In front beds</option>
+                    <option value="back_beds">In back beds</option>
+                    <option value="front_porch">Front porch</option>
+                    <option value="other">Other</option>
+                </select>
+                
+                <label for="other_instructions">Other Instructions:</label>
+                <input type="text" id="other_instructions" name="other_instructions">
+        
+                
+            </fieldset>
+
+            <!-- Submit Button -->
+            <button type="submit">Submit Order</button>
+        </form>
+    </div>
+</body>
+</html>
