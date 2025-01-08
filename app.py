@@ -37,13 +37,9 @@ def save_order(data):
         """, data)
 
 
-# Your credentials
-USERNAME = "brian"
-PASSWORD = "mccarty"
-
 def check_auth(username, password):
     """Validate username and password."""
-    return username == USERNAME and password == PASSWORD
+    return username == config.USERNAME and password == config.PASSWORD
 
 def authenticate():
     """Sends a 401 response with a Basic Auth prompt."""
