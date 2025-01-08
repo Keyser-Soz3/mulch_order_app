@@ -1,16 +1,28 @@
 from flask import Flask, render_template, request, redirect, session, Response
-import sqlite3
+# import sqlite3
 # uncomment this import for local testing
 # import config
-import os
+import os, sqlalchemy
+from google.cloud.sql.connector import Connector
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_APP_SECRET")  # Replace with a secure secret key
+connector = Connector()
 
-# Initialize the database
+# Initialize the db connection
+def getconn():
+    conn = connector.connect(
+        os.environ.get("GLCOUD_SQL_CONNECTION_STRING"),
+        "pymysql",
+        user = os.environ.get("GLCOUD_SQL_APP_USER"),
+        password = os.environ.get("GLCOUD_SQL_APP_PASSWORD"),
+        db = os.environ.get("GLCOUD_SQL_DATABASE")
+    )
+    return conn
+
 def init_db():
-    with sqlite3.connect("orders.db") as conn:
-        conn.execute("""
+    with pool.connect() as db_conn:
+        db_conn.execute("""
             CREATE TABLE IF NOT EXISTS orders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 first_name TEXT NOT NULL,
@@ -29,10 +41,33 @@ def init_db():
                 village TEXT
             )
         """)
+    
+    # with sqlite3.connect("orders.db") as conn:
+    #     conn.execute("""
+    #         CREATE TABLE IF NOT EXISTS orders (
+    #             id INTEGER PRIMARY KEY AUTOINCREMENT,
+    #             first_name TEXT NOT NULL,
+    #             last_name TEXT NOT NULL,
+    #             address TEXT NOT NULL,
+    #             phone TEXT NOT NULL,
+    #             email TEXT NOT NULL,
+    #             quantity INTEGER NOT NULL,
+    #             donation REAL NOT NULL,
+    #             total_price REAL NOT NULL,
+    #             payment_method TEXT NOT NULL,
+    #             delivery_location TEXT NOT NULL,
+    #             other_instructions TEXT,
+    #             scout TEXT,
+    #             troop TEXT,
+    #             village TEXT
+    #         )
+    #     """)
+
 
 # Save order to the database
 def save_order(data):
-    with sqlite3.connect("orders.db") as conn:
+    # with sqlite3.connect("orders.db") as conn:
+    with pool.connect() as conn:
         conn.execute("""
             INSERT INTO orders (first_name, last_name, address, phone, email, quantity, donation, total_price, payment_method, delivery_location, other_instructions, scout, troop, village)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -102,5 +137,14 @@ def form():
     )
 
 if __name__ == "__main__":
+    # create a connection pool for query execution
+    pool = sqlalchemy.create_engine(
+        "mysql+pymysql://",
+        creator=getconn
+    )
+
+    # ensure the table exists
     init_db()
+
+    #execute the main app so we are ready to take orders
     app.run(host="0.0.0.0", port=8080, debug=True)
