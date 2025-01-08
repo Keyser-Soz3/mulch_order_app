@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, session, Response
 import sqlite3
-import config
 
 app = Flask(__name__)
 app.secret_key = ENV['FLASK_APP_SECRET']  # Replace with a secure secret key
