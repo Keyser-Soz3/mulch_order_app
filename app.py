@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, Response
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = ENV['FLASK_APP_SECRET']  # Replace with a secure secret key
+app.secret_key = os.environ.get("FLASK_APP_SECRET")  # Replace with a secure secret key
 
 # Initialize the database
 def init_db():
@@ -38,7 +38,7 @@ def save_order(data):
 
 def check_auth(username, password):
     """Validate username and password."""
-    return username == ENV['USERNAME'] and password == ENV['PASSWORD']
+    return username == os.environ.get("USERNAME") and password == os.environ.get("PASSWORD")
 
 def authenticate():
     """Sends a 401 response with a Basic Auth prompt."""
@@ -95,7 +95,7 @@ def form():
         troop=session.get("troop", ""),
         village=session.get("village", ""),
         form = form,
-        API_KEY = ENV['GCLOUD_PLACES_API_KEY']
+        API_KEY = os.environ.get("GCLOUD_PLACES_API_KEY")
     )
 
 if __name__ == "__main__":
