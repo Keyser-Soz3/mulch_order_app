@@ -52,7 +52,8 @@ def getconn():
     return conn
 
 def init_db():
-    Base.metadata.create_table_if_not_exists(engine)
+    #create the table we need
+    Base.metadata.create_all(engine)
     # Session factory, bound to the engine
     Session = sessionmaker(bind=engine)
 
