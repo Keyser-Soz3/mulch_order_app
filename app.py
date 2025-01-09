@@ -14,6 +14,10 @@ connector = Connector()
 Base = declarative_base()
 global_session = None   
 
+# TODO: Cleanup import statements and requirements.txt
+# TODO: remove unused commented code
+# TODO: add paypal as a payment type
+
 #create a class to hold our table definition
 class Order(Base):
     __tablename__ = "orders"
@@ -171,7 +175,7 @@ if __name__ == "__main__":
     engine = create_engine("mysql+pymysql://", creator=getconn)
 
     # ensure the table exists
-    session = init_db()
+    init_db()
     
     #execute the main app so we are ready to take orders
     app.run(host="0.0.0.0", port=8080, debug=True)
