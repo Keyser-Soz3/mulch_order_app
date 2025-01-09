@@ -2,12 +2,39 @@ from flask import Flask, render_template, request, redirect, session, Response
 # import sqlite3
 # uncomment this import for local testing
 # import config
-import os, sqlalchemy
+import os
+from sqlalchemy import create_engine, Column, Integer, String, REAL
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 from google.cloud.sql.connector import Connector
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_APP_SECRET")  # Replace with a secure secret key
 connector = Connector()
+Base = declarative_base()
+global_session = None   
+
+#create a class to hold our table definition
+class Order(Base):
+    __tablename__ = "orders"
+
+    id = Column(Integer, primary_key=True)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
+    address = Column(String(250), nullable=False)
+    phone = Column(String(15), nullable=False)
+    email = Column(String(100), nullable=False)
+    quantity = Column(Integer, nullable=False)
+    donation = Column(REAL, nullable=False)
+    total_price = Column(REAL, nullable=False)
+    payment_method = Column(String(15), nullable=False)
+    delivery_location = Column(String(50), nullable=False)
+    other_instructions = Column(String(250))
+    scout = Column(String(50), nullable=False)
+    troop = Column(String(50), nullable=False)
+    village = Column(String(50), nullable=False)
+
+
 
 # Initialize the db connection
 def getconn():
@@ -21,26 +48,23 @@ def getconn():
     return conn
 
 def init_db():
-    with pool.connect() as db_conn:
-        db_conn.execute("""
-            CREATE TABLE IF NOT EXISTS orders (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                first_name TEXT NOT NULL,
-                last_name TEXT NOT NULL,
-                address TEXT NOT NULL,
-                phone TEXT NOT NULL,
-                email TEXT NOT NULL,
-                quantity INTEGER NOT NULL,
-                donation REAL NOT NULL,
-                total_price REAL NOT NULL,
-                payment_method TEXT NOT NULL,
-                delivery_location TEXT NOT NULL,
-                other_instructions TEXT,
-                scout TEXT,
-                troop TEXT,
-                village TEXT
-            );
-        """)
+    Base.metadata.create_table_if_not_exists(engine)
+    # Session factory, bound to the engine
+    Session = sessionmaker(bind=engine)
+
+    # Create a new session
+    global_session = Session()
+
+    # with pool.connect() as db_conn:
+    #     if not db_conn.dialect.has_table(db_conn, "orders"):
+    #         metadata = MetaData(db_conn)
+    #         # Create a table with the appropriate Columns
+    #         Table("orders", metadata,
+    #             Column('id', Integer, primary_key=True, nullable=False), 
+    #             Column('Date', Date), Column('Country', String),
+    #             Column('Brand', String), Column('Price', Float),
+    #         # Implement the creation
+    #         metadata.create_all()
     
     # with sqlite3.connect("orders.db") as conn:
     #     conn.execute("""
@@ -66,12 +90,18 @@ def init_db():
 
 # Save order to the database
 def save_order(data):
+    #create a new order object for saving
+    new_order = Order(data)    
+    #add the order to the table
+    global_session.add(new_order)
+    #commit the transaction
+    global_session.commit()
     # with sqlite3.connect("orders.db") as conn:
-    with pool.connect() as conn:
-        conn.execute("""
-            INSERT INTO orders (first_name, last_name, address, phone, email, quantity, donation, total_price, payment_method, delivery_location, other_instructions, scout, troop, village)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-        """, data)
+    # with engine.connect() as conn:
+    #     conn.execute("""
+    #         INSERT INTO orders (first_name, last_name, address, phone, email, quantity, donation, total_price, payment_method, delivery_location, other_instructions, scout, troop, village)
+    #         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    #     """, data)
 
 
 def check_auth(username, password):
@@ -137,14 +167,11 @@ def form():
     )
 
 if __name__ == "__main__":
-    # create a connection pool for query execution
-    pool = sqlalchemy.create_engine(
-        "mysql+pymysql://",
-        creator=getconn
-    )
+    # create a connection engine for query execution
+    engine = create_engine("mysql+pymysql://", creator=getconn)
 
     # ensure the table exists
-    init_db()
-
+    session = init_db()
+    
     #execute the main app so we are ready to take orders
     app.run(host="0.0.0.0", port=8080, debug=True)
